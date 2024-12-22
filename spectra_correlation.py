@@ -31,12 +31,12 @@ def calculate_euclidean_distance(spectra):
     return distance_matrix
 
 ds = get_dataset(csv_input_folder="full_data", timestamps_as_floats=False)
-choosen_sensor = 21
+chosen_sensor = 20
 start = pd.Timestamp('2024-08-10 00:00:00', tz="UTC+03:00")
-end = pd.Timestamp('2024-08-13 01:00:00', tz="UTC+03:00")
+end =   pd.Timestamp('2024-08-19 01:00:00', tz="UTC+03:00")
 
-filtered_dataset = ds.sel(sensor=choosen_sensor).where(
-    ds.sel(sensor=choosen_sensor)['base'].notnull() & # Get existing (timestamp, sensor) pairs
+filtered_dataset = ds.sel(sensor=chosen_sensor).where(
+    ds.sel(sensor=chosen_sensor)['base'].notnull() & # Get existing (timestamp, sensor) pairs
     (ds['timestamp'] >= start) &
     (ds['timestamp'] <= end),
     drop=True
@@ -73,12 +73,12 @@ sns.heatmap(angular, ax=axes[1, 0], cmap=colormap, annot=False)
 axes[1, 1].set_title('Euclidean distance')
 sns.heatmap(euclidean, ax=axes[1, 1], cmap=colormap, annot=False)
 
-text = start_time + "\n" + end_time  + "\nSensor: " + str(choosen_sensor)
+text = start_time + "\n" + end_time  + "\nSensor: " + str(chosen_sensor)
 fig.text(0.5, 0.935, text, ha='center', fontsize=14)
 plt.tight_layout(pad=4)  
 
 # Save plot
-plotname = "bee-distances-matrix.png"
+plotname = f"distances-matrix-sensor-{chosen_sensor}.png"
 plt.savefig(plotname)
 print(f"Plot {plotname} was created!")
 
