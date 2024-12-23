@@ -1,10 +1,8 @@
 from scipy.spatial.distance import pdist, squareform
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os 
-from preprocessing import get_dataset
 
 def calculate_pearson_distance(spectra):
     distances = pdist(spectra, metric='correlation')
@@ -30,59 +28,54 @@ def calculate_euclidean_distance(spectra):
     distance_matrix = squareform(distances)
     return distance_matrix
 
-ds = get_dataset(csv_input_folder="full_data", timestamps_as_floats=False)
-chosen_sensor = 20
-start = pd.Timestamp('2024-08-10 00:00:00', tz="UTC+03:00")
-end =   pd.Timestamp('2024-08-19 01:00:00', tz="UTC+03:00")
+def plot_correlations(ds, start, end, chosen_sensor):
+    filtered_dataset = ds.sel(sensor=chosen_sensor).where(
+            ds.sel(sensor=chosen_sensor)['base'].notnull() & # Get existing (timestamp, sensor) pairs
+            (ds['timestamp'] >= start) &
+            (ds['timestamp'] <= end),
+            drop=True
+    )
+    spectra = filtered_dataset['spectrum'].values
+    start_time = "Start time: " + str(filtered_dataset['timestamp'].values[0])
+    end_time ="End time: " + str(filtered_dataset['timestamp'].values[-1])
 
-filtered_dataset = ds.sel(sensor=chosen_sensor).where(
-    ds.sel(sensor=chosen_sensor)['base'].notnull() & # Get existing (timestamp, sensor) pairs
-    (ds['timestamp'] >= start) &
-    (ds['timestamp'] <= end),
-    drop=True
-)
+    print(ds, "\n")
+    print(filtered_dataset, "\n")
+    print(start_time)
+    print(end_time)
 
-spectra = filtered_dataset['spectrum'].values
-start_time = "Start time: " + str(filtered_dataset['timestamp'].values[0])
-end_time ="End time: " + str(filtered_dataset['timestamp'].values[-1])
+    # Compute distances
+    pearson = calculate_pearson_distance(spectra)
+    cosine = calculate_cosine_distance(spectra)
+    angular = calculate_angular_distance(spectra)
+    euclidean = calculate_euclidean_distance(spectra)
 
-print(ds, "\n")
-print(filtered_dataset, "\n")
-print(start_time)
-print(end_time)
+    # Create a figure with 4 subplots arranged in a square
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    colormap = 'coolwarm'
 
-# Compute distances
-pearson = calculate_pearson_distance(spectra)
-cosine = calculate_cosine_distance(spectra)
-angular = calculate_angular_distance(spectra)
-euclidean = calculate_euclidean_distance(spectra)
+    axes[0, 0].set_title('Pearson distance')
+    sns.heatmap(pearson,ax=axes[0, 0], cmap=colormap, annot=False)
 
-# Create a figure with 4 subplots arranged in a square
-fig, axes = plt.subplots(2, 2, figsize=(12, 10))
-colormap = 'coolwarm'
+    axes[0, 1].set_title('Cosine distance')
+    sns.heatmap(cosine, ax=axes[0, 1], cmap=colormap, annot=False)
 
-axes[0, 0].set_title('Pearson distance')
-sns.heatmap(pearson,ax=axes[0, 0], cmap=colormap, annot=False)
+    axes[1, 0].set_title('Angular distance')
+    sns.heatmap(angular, ax=axes[1, 0], cmap=colormap, annot=False)
 
-axes[0, 1].set_title('Cosine distance')
-sns.heatmap(cosine, ax=axes[0, 1], cmap=colormap, annot=False)
+    axes[1, 1].set_title('Euclidean distance')
+    sns.heatmap(euclidean, ax=axes[1, 1], cmap=colormap, annot=False)
 
-axes[1, 0].set_title('Angular distance')
-sns.heatmap(angular, ax=axes[1, 0], cmap=colormap, annot=False)
+    text = start_time + "\n" + end_time  + "\nSensor: " + str(chosen_sensor)
+    fig.text(0.5, 0.935, text, ha='center', fontsize=14)
+    plt.tight_layout(pad=4)  
 
-axes[1, 1].set_title('Euclidean distance')
-sns.heatmap(euclidean, ax=axes[1, 1], cmap=colormap, annot=False)
+    # Save plot
+    plotname = f"distances-matrix-sensor-{chosen_sensor}.png"
+    plt.savefig(plotname)
+    print(f"Plot {plotname} was created!")
 
-text = start_time + "\n" + end_time  + "\nSensor: " + str(chosen_sensor)
-fig.text(0.5, 0.935, text, ha='center', fontsize=14)
-plt.tight_layout(pad=4)  
-
-# Save plot
-plotname = f"distances-matrix-sensor-{chosen_sensor}.png"
-plt.savefig(plotname)
-print(f"Plot {plotname} was created!")
-
-# My CICD
-lyn_app_path = "/Applications/Lyn.app"
-if os.path.exists(lyn_app_path):
-    os.system(f'open -g -a {lyn_app_path} {plotname}')
+    # My CICD
+    lyn_app_path = "/Applications/Lyn.app"
+    if os.path.exists(lyn_app_path):
+        os.system(f'open -g -a {lyn_app_path} {plotname}')

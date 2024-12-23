@@ -3,12 +3,37 @@ import numpy as np
 import xarray as xr
 import os
 
+import requests
+import pandas as pd
+from datetime import datetime, timedelta
+
+def download_csv_files():
+    today = datetime.today()
+    date_to = today.strftime('%Y-%m-%d')  # Current date
+    date_from = (today - timedelta(days=8)).strftime('%Y-%m-%d')  # 8 days ago
+    sensors = [20, 21, 46]
+    base_url = "http://apiologia.zymologia.fi/export/"
+
+    for sensor in sensors:
+        url = f"{base_url}?sensor={sensor}&date_from={date_from}&date_to={date_to}"
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            output_dir = "weekly_data"
+            os.makedirs(output_dir, exist_ok=True)  # Create the directory if it doesn't exist
+            filename = f"{output_dir}/sensor_{sensor}_data_{date_from}_to_{date_to}.csv"
+            with open(filename, 'wb') as file:
+                file.write(response.content)
+            print(f"Data for sensor {sensor} downloaded and saved as {filename}")
+        else:
+            print(f"Failed to download data for sensor {sensor}. Status code: {response.status_code}")
+
 def parse_spectrum(spectrum_string):
     list_of_strings = str(spectrum_string).strip('[]').split(';')
     list_of_floats = [float(s) for s in list_of_strings]
     return list_of_floats
 
-def get_dataset(csv_input_folder: str, timestamps_as_floats: bool):
+def load_dataset(csv_input_folder: str, timestamps_as_floats: bool):
     if not os.path.exists(csv_input_folder):
         raise Exception(f"Folder '{csv_input_folder}' does not exist")
 
@@ -79,7 +104,7 @@ def get_dataset(csv_input_folder: str, timestamps_as_floats: bool):
     return dataset
 
 if __name__ == "__main__":
-    dataset = get_dataset("example_data", False)
+    dataset = load_dataset("example_data", False)
     print("Memory usage: {:.3f} MB".format(dataset.nbytes / (1024**2)))
     print(dataset)
 
