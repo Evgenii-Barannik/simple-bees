@@ -38,7 +38,7 @@ def plot_mean_spectra(ds, start, end):
 
     plt.xlabel('Channel')
     plt.ylabel('Amplitude')
-    plt.title('Mean spectra')
+    plt.title('Acoustic spectra of beehives')
     plt.legend()
     plt.xlim(0, NUM_OF_CHANNELS)
     plt.grid(True)
