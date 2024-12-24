@@ -12,3 +12,6 @@ if __name__ == "__main__":
     plot_mean_spectra(ds, one_week_ago, now);
     for sensor in [20, 21, 46]:
         plot_correlations(ds, one_week_ago, now, sensor)
+
+    with open('output.txt', 'w') as f:
+        print(f"Last executed at {now}!", file=f)
