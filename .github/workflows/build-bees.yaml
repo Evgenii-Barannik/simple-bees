@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 * * * *'
+    - cron: '*/30 * * * *' # Will trigger every 30 min
     
 permissions:
   contents: write
@@ -42,9 +42,6 @@ jobs:
 
   deploy:
     needs: build
-    permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
