@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os 
+from datetime import datetime
+import pytz
 
 def calculate_pearson_distance(spectra):
     distances = pdist(spectra, metric='correlation')
@@ -35,9 +37,10 @@ def plot_correlations(ds, start, end, chosen_sensor):
             (ds['timestamp'] <= end),
             drop=True
     )
+    helsinki_tz = pytz.timezone('Europe/Helsinki')
     spectra = filtered_dataset['spectrum'].values
-    start_time = "Start time: " + str(filtered_dataset['timestamp'].values[0])
-    end_time ="End time: " + str(filtered_dataset['timestamp'].values[-1])
+    start_time = "From: " + str(filtered_dataset['timestamp'].values[0].astimezone(helsinki_tz))
+    end_time =   "To     : " + str(filtered_dataset['timestamp'].values[-1].astimezone(helsinki_tz))
 
     print(ds, "\n")
     print(filtered_dataset, "\n")

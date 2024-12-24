@@ -1,8 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from preprocessing import load_dataset
-from spectra_correlation import plot_correlations
+import pytz
 
 def filter_and_add_bins(ds, sensor_id, start, end):
     filtered = ds.sel(sensor=sensor_id).where(
@@ -23,9 +22,11 @@ def plot_mean_spectra(ds, start, end):
     filtered_datset_46 = filter_and_add_bins(ds, 46, start, end) 
     mean_spectrum_46 = filtered_datset_46.groupby('hour_bin').mean(dim='timestamp')['spectrum'].mean(dim='hour_bin')
 
-    start_time = "Start time: " + str(filtered_dataset_20['timestamp'].values[0])
-    end_time ="End time: " + str(filtered_dataset_20['timestamp'].values[-1])
-    text = start_time + "\n" + end_time
+    helsinki_tz = pytz.timezone('Europe/Helsinki')
+    start_time = "From: " + str(filtered_dataset_20['timestamp'].values[0].astimezone(helsinki_tz))
+    end_time =   "To    : " + str(filtered_dataset_20['timestamp'].values[-1].astimezone(helsinki_tz))
+
+    text = "For sensor 20:\n" + start_time + "\n" + end_time
     _, ax = plt.subplots(figsize=(8, 5)) 
     plt.plot(mean_spectrum_20.values, color='red', linewidth=2, label='Sensor 20, mean')
     plt.plot(mean_spectrum_21.values, color='orange', linewidth=2, label='Sensor 21, mean')
