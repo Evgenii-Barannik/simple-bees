@@ -29,9 +29,9 @@ def plot_mean_spectra(ds, start, end):
         assert (NUM_OF_CHANNELS == mean_spectrum.values.shape[0]) 
         start_time = "From: " + str(filtered_dataset['timestamp'].values[0].astimezone(helsinki_tz))
         end_time =   "To: " + str(filtered_dataset['timestamp'].values[-1].astimezone(helsinki_tz))
-        plt.plot(mean_spectrum.values, color=plotting_color, linewidth=2, label=f'Sensor {sensor}, mean')
+        plt.plot(mean_spectrum.values, color=plotting_color, linewidth=2, label=f'Sensor {sensor}, averaged')
         if sensor == 20: # Detailed info for sensor 20 only
-            text = "Sensor: " + str(sensor) +"\n" + start_time + "\n" + end_time +  "\n\n"
+            text = "For sensor " + str(sensor) +" averaged\n" + start_time + "\n" + end_time +  "\n\n"
 
     current_ticks = [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600, NUM_OF_CHANNELS]
     ax.set_xticks(current_ticks)
@@ -58,9 +58,9 @@ def plot_mean_spectra(ds, start, end):
 if __name__ == "__main__":
     helsinki_tz = pytz.timezone('Europe/Helsinki')
     helsinki_now = datetime.now(helsinki_tz)
-    helsinki_week_ago = helsinki_now - pd.Timedelta(weeks=1)
+    helsinki_ago = helsinki_now - pd.Timedelta(days=3)
 
     # With an assumption that csv files are already dowloaded:
     # download_csv_files() 
     ds = load_dataset(csv_input_folder="weekly_data", timestamps_as_floats=False)
-    plot_mean_spectra(ds, helsinki_week_ago, helsinki_now)
+    plot_mean_spectra(ds, helsinki_ago, helsinki_now)
