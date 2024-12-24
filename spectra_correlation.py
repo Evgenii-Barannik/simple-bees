@@ -69,7 +69,7 @@ def plot_correlations(ds, start, end, chosen_sensor):
 
     start_time = "From: " + str(filtered_dataset['timestamp'].values[0].astimezone(helsinki_tz))
     end_time =   "To: " + str(filtered_dataset['timestamp'].values[-1].astimezone(helsinki_tz))
-    text = "Sensor: " + str(chosen_sensor) +"\n" + start_time + "\n" + end_time
+    text = "Correlation matrices for signal from sensor " + str(chosen_sensor) +"\n" + start_time + "\n" + end_time
     fig.text(0.6, 0.935, text, ha='right', fontsize=14)
     plt.tight_layout(pad=4)  
 
@@ -86,7 +86,7 @@ def plot_correlations(ds, start, end, chosen_sensor):
 if __name__ == "__main__":
     helsinki_tz = pytz.timezone('Europe/Helsinki')
     helsinki_now = datetime.now(helsinki_tz)
-    helsinki_week_ago = helsinki_now - pd.Timedelta(weeks=1)
+    helsinki_week_ago = helsinki_now - pd.Timedelta(days=4)
 
     # With an assumption that csv files are already dowloaded:
     # download_csv_files() 
