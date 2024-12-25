@@ -56,20 +56,20 @@ def plot_correlations(ds, start, end, chosen_sensor):
     colormap = 'coolwarm'
 
     axes[0, 0].set_title('Pearson distance')
-    sns.heatmap(pearson,ax=axes[0, 0], cmap=colormap, annot=False)
+    sns.heatmap(pearson,ax=axes[0, 0], cmap=colormap, annot=False, square=True)
 
     axes[0, 1].set_title('Cosine distance')
-    sns.heatmap(cosine, ax=axes[0, 1], cmap=colormap, annot=False)
+    sns.heatmap(cosine, ax=axes[0, 1], cmap=colormap, annot=False, square=True)
 
     axes[1, 0].set_title('Angular distance')
-    sns.heatmap(angular, ax=axes[1, 0], cmap=colormap, annot=False)
+    sns.heatmap(angular, ax=axes[1, 0], cmap=colormap, annot=False, square=True)
 
     axes[1, 1].set_title('Euclidean distance')
-    sns.heatmap(euclidean, ax=axes[1, 1], cmap=colormap, annot=False)
+    sns.heatmap(euclidean, ax=axes[1, 1], cmap=colormap, annot=False, square=True)
 
     start_time = "From: " + str(filtered_dataset['timestamp'].values[0].astimezone(helsinki_tz))
     end_time =   "To: " + str(filtered_dataset['timestamp'].values[-1].astimezone(helsinki_tz))
-    text = "Correlation matrices for signal from sensor " + str(chosen_sensor) +"\n" + start_time + "\n" + end_time
+    text = "Distance matrices for signal from sensor " + str(chosen_sensor) +"\n" + start_time + "\n" + end_time
     fig.text(0.6, 0.935, text, ha='right', fontsize=14)
     plt.tight_layout(pad=4)  
 
