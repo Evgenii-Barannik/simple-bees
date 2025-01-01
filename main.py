@@ -16,7 +16,7 @@ if __name__ == "__main__":
     print(helsinki_now)
     plot_mean_spectra(ds, helsinki_before, helsinki_now);
     for sensor in [20, 21, 46]:
-        plot_correlations(ds, helsinki_before, helsinki_now, sensor)
+        # plot_correlations(ds, helsinki_before, helsinki_now, sensor)
         plot_continuous_correlations(ds, helsinki_before, helsinki_now, sensor)
 
     with open('output.txt', 'w') as f:

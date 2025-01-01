@@ -77,15 +77,15 @@ def plot_continuous_correlations(ds, start, end, chosen_sensor):
     angular_matrix = calculate_angular_distance(spectra)
     euclidean_matrix = calculate_euclidean_distance(spectra)
 
-    im1 = axes[0, 0].pcolormesh(x_edges, y_edges, pearson_matrix, cmap=colormap, shading="auto")
+    im1 = axes[0, 0].pcolormesh(x_edges, y_edges, pearson_matrix, cmap=colormap, shading="auto", vmin=0, vmax=1)
     axes[0, 0].set_title('Pearson distance')
     plt.colorbar(im1, ax=axes[0, 0]) 
 
-    im2 = axes[0, 1].pcolormesh(x_edges, y_edges, cosine_matrix, cmap=colormap, shading="auto")
+    im2 = axes[0, 1].pcolormesh(x_edges, y_edges, cosine_matrix, cmap=colormap, shading="auto", vmin=0, vmax=1)
     axes[0, 1].set_title('Cosine distance')
     plt.colorbar(im2, ax=axes[0, 1])
 
-    im3 = axes[1, 0].pcolormesh(x_edges, y_edges, angular_matrix, cmap=colormap, shading="auto")
+    im3 = axes[1, 0].pcolormesh(x_edges, y_edges, angular_matrix, cmap=colormap, shading="auto", vmin=0, vmax=1)
     axes[1, 0].set_title('Angular distance')
     plt.colorbar(im3, ax=axes[1, 0])
 
@@ -172,12 +172,10 @@ def plot_correlations(ds, start, end, chosen_sensor):
 
 if __name__ == "__main__":
     helsinki_tz = pytz.timezone('Europe/Helsinki')
-    helsinki_now = datetime.now(helsinki_tz)
-    helsinki_before = helsinki_now - pd.Timedelta(days=2)
+    helsinki_start = datetime(2024, 12, 29, tzinfo=helsinki_tz)
+    helsinki_end = helsinki_start - pd.Timedelta(days=2)
 
-    # With an assumption that csv files are already dowloaded:
-    # download_csv_files() 
-    ds = load_dataset(csv_input_folder="weekly_data", timestamps_as_floats=False)
-    plot_continuous_correlations(ds, helsinki_before, helsinki_now, 20) # Testing for sensor 20
-    plot_correlations(ds, helsinki_before, helsinki_now, 20) # Testing for sensor 20
+    # With an assumption that csv files already exist:
+    ds = load_dataset(csv_input_folder="sensor-20-example-data", timestamps_as_floats=False)
+    plot_continuous_correlations(ds, helsinki_end, helsinki_start, 20) # Testing for sensor 20
 
