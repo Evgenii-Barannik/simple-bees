@@ -2,15 +2,21 @@ import pandas as pd
 import numpy as np
 import xarray as xr
 import os
-
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+# My CICD
+def show_image(plotname):
+    lyn_app_path = "/Applications/Lyn.app"
+    if os.path.exists(lyn_app_path):
+        os.system(f'open -g -a {lyn_app_path} {plotname}')
 
 def download_csv_files():
-    today = datetime.today()
-    date_to = today.strftime('%Y-%m-%d')  # Current date
-    date_from = (today - timedelta(days=8)).strftime('%Y-%m-%d')  # 8 days ago
+    utc_tz = ZoneInfo('UTC')
+    today = datetime.today().astimezone(utc_tz)
+    date_to = today.strftime('%Y-%m-%d') 
+    date_from = (today - timedelta(days=5)).strftime('%Y-%m-%d') 
     sensors = [20, 21, 46]
     base_url = "http://apiologia.zymologia.fi/export/"
 
@@ -36,7 +42,6 @@ def parse_spectrum(spectrum_string):
 def load_dataset(csv_input_folder: str, timestamps_as_floats: bool):
     if not os.path.exists(csv_input_folder):
         raise Exception(f"Folder '{csv_input_folder}' does not exist")
-
     csv_pathnames = [os.path.join(csv_input_folder, name) for name in os.listdir(csv_input_folder) if name.endswith('.csv')]
     if not csv_pathnames:
         raise Exception(f"Put .csv files in '{csv_input_folder}', it is empty now.")
@@ -106,16 +111,11 @@ def load_dataset(csv_input_folder: str, timestamps_as_floats: bool):
 if __name__ == "__main__":
     dataset = load_dataset("example_data", False)
     print("Memory usage: {:.3f} MB".format(dataset.nbytes / (1024**2)))
-    print(dataset)
 
-    print("\nTimestamps:")
-    timestamps = dataset['timestamp'].values
-    print (timestamps, "\n")
-    print("Timestamps with data for sensor 21:")
     filtered_dataset = dataset['timestamp'].where(
             ~dataset.sel(sensor=21)['base'].isnull(),
             drop=True
-    ).values
+    ).head()
     print (filtered_dataset, "\n")
 
     ## Saving dataframe (requires epochs_as_floats==True)
