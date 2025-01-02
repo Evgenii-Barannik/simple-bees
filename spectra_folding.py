@@ -1,10 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
-import pytz
 from datetime import datetime
-from preprocessing import download_csv_files, load_dataset
-
+from preprocessing import * 
+from zoneinfo import ZoneInfo
 NUM_OF_CHANNELS = 1848
 
 def filter_and_add_bins(ds, sensor_id, start, end):
@@ -19,9 +17,8 @@ def filter_and_add_bins(ds, sensor_id, start, end):
     return filtered
 
 def plot_mean_spectra(ds, start, end):
-
     _, ax = plt.subplots(figsize=(8, 5)) 
-    helsinki_tz = pytz.timezone('Europe/Helsinki')
+    helsinki_tz = ZoneInfo('Europe/Helsinki')
     text = ""
     for (sensor, plotting_color) in [(20, "red"), (21, "orange"), (46, "blue")]: 
         filtered_dataset = filter_and_add_bins(ds, sensor, start, end) 
@@ -43,24 +40,20 @@ def plot_mean_spectra(ds, start, end):
     plt.xlim(0, NUM_OF_CHANNELS)
     plt.grid(True)
     plt.tight_layout()
-    plt.figtext(0.95, 0.7, text, ha='right', va='top', fontsize=9, 
-                    bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+    plt.figtext(0.95, 0.7, text, ha='right', va='top', fontsize=9, bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
 
-    filename = "mean-spectra.png"
-    plt.savefig(filename)
+    plotname = "mean-spectra.png"
+    plt.savefig(plotname)
     plt.close()
-
-    # My CICD
-    lyn_app_path = "/Applications/Lyn.app"
-    if os.path.exists(lyn_app_path):
-        os.system(f'open -g -a {lyn_app_path} {filename}')
+    return plotname 
 
 if __name__ == "__main__":
-    helsinki_tz = pytz.timezone('Europe/Helsinki')
+    helsinki_tz = ZoneInfo('Europe/Helsinki')
     helsinki_now = datetime.now(helsinki_tz)
     helsinki_ago = helsinki_now - pd.Timedelta(days=3)
 
     # With an assumption that csv files are already dowloaded:
     # download_csv_files() 
     ds = load_dataset(csv_input_folder="weekly_data", timestamps_as_floats=False)
-    plot_mean_spectra(ds, helsinki_ago, helsinki_now)
+    plotname = plot_mean_spectra(ds, helsinki_ago, helsinki_now)
+    show_image(plotname)
