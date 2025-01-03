@@ -22,7 +22,7 @@ def plot_mean_spectra(ds, sensors, start, end, plotname):
     text = ""
     spectra_len = ds['spectrum'][0].shape[1]
     cmap = mpl.colormaps['coolwarm']
-    colors = cmap(np.linspace(0, 1, len(sensors)))
+    colors = cmap(np.linspace(1, 0, len(sensors)))
     for (i, sensor) in enumerate(sensors):
         filtered_dataset = filter_and_add_bins(ds, sensor, start, end) 
         mean_spectrum = filtered_dataset.groupby('hour_bin').mean(dim='timestamp')['spectrum'].mean(dim='hour_bin')
