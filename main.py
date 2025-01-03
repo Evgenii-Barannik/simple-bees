@@ -2,8 +2,8 @@ import pandas as pd
 from zoneinfo import ZoneInfo
 from datetime import datetime
 
-from spectra_correlation import *
-from spectra_folding import * 
+from correlations import *
+from means import * 
 from preprocessing import *
 
 if __name__ == "__main__":
