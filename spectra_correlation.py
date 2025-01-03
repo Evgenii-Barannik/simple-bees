@@ -49,9 +49,8 @@ def get_ticks_between(start, end):
         ticks.append(moving)
     return ticks
 
-def plot_continuous_correlations(ds, start, end, chosen_sensor):
+def plot_continuous_correlations(ds, chosen_sensor, start, end):
     assert start < end
-
     filtered_dataset = ds.sel(sensor=chosen_sensor).where(
             ds.sel(sensor=chosen_sensor)['base'].notnull() &
             (ds['timestamp'] >= start) &
@@ -123,7 +122,7 @@ def plot_continuous_correlations(ds, start, end, chosen_sensor):
         ax.yaxis.set_major_formatter(formatter)
         for label in ax.get_xticklabels(which='major'):
             label.set(rotation=30, ha='right')
-        for epoch in unix_epochs: # Black dots for timestamps
+        for epoch in unix_epochs: # Dots for timestamps
             ax.scatter(epoch, epoch, color='black', s=1)
 
     text = "Distance measures for signal from sensor " + str(chosen_sensor) +"\n" + start_for_printing + "\n" + end_for_printing
@@ -134,21 +133,18 @@ def plot_continuous_correlations(ds, start, end, chosen_sensor):
     # Save plot
     plotname = f"distance-measures-sensor-{chosen_sensor}.png"
     plt.savefig(plotname)
+    plt.close()
     print(f"Plot {plotname} was created!")
     return plotname
 
 if __name__ == "__main__":
-    # Timezone testing
+    sensors = [20]
+    data_dir = "data"
     helsinki_tz = ZoneInfo('Europe/Helsinki')
-    utc_tz = ZoneInfo("UTC")
-    helsinki_time = datetime(2024, 12, 25, 2, 0, tzinfo=helsinki_tz)
-    utc_time = datetime(2024, 12, 25, 0, 0, tzinfo=utc_tz)
-    assert helsinki_time.timestamp() == utc_time.timestamp()
-
     helsinki_start = datetime(2024, 12, 25, 0, 0, tzinfo=helsinki_tz)
     helsinki_end = helsinki_start + pd.Timedelta(days=3)
-    
-    # # With an assumption that csv files with data already exist:
-    ds = load_dataset(csv_input_folder="example_data", timestamps_as_floats=False)
-    plotname = plot_continuous_correlations(ds, helsinki_start, helsinki_end, 20)
-    show_image(plotname)
+
+    files = download_files_if_needed(sensors, helsinki_start, helsinki_end, data_dir) 
+    dataset = load_dataset(files)
+    correlations = plot_continuous_correlations(dataset, sensors[0], helsinki_start, helsinki_end)
+    show_image(correlations)
