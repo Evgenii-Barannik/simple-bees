@@ -138,10 +138,10 @@ def plot_continuous_correlations(ds, chosen_sensor, start, end):
     return plotname
 
 if __name__ == "__main__":
-    sensors = [20]
+    sensors = [21]
     data_dir = "data"
     helsinki_tz = ZoneInfo('Europe/Helsinki')
-    helsinki_start = datetime(2024, 12, 25, 0, 0, tzinfo=helsinki_tz)
+    helsinki_start = datetime(2024, 8, 10, 0, 0, tzinfo=helsinki_tz)
     helsinki_end = helsinki_start + pd.Timedelta(days=3)
 
     files = download_files_if_needed(sensors, helsinki_start, helsinki_end, data_dir) 

@@ -3,75 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple bees</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f4;
-      overflow: hidden;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      overflow-y: auto; /* Allow vertical scrolling if content overflows */
-    }
-
-    .block {
-      width: 100%;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .block img {
-      width: 80%; /* Make the image take up 100% of the width of its container */
-      max-width: 80%; /* Ensure image does not overflow the container */
-      height: auto;
-      object-fit: contain; /* Ensure the aspect ratio is maintained */
-      border-radius: 10px;
-    }
-
-    .block p {
-      margin-top: 10px;
-      font-size: 16px;
-      color: #333;
-    }
-  </style>
+  <title>Simple Bees</title>
 </head>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+  }
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+  }
+
+  select {
+    font-size: 16px;
+    padding: 5px;
+    height: 35px;
+  }
+
+  img {
+    max-width: 90%;
+    height: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+</style>
+
 <body>
   <div class="container">
-    <div class="block">
-      <img src="mean-spectra-hours.png" alt="Mean-spectra-hours">
-      <img src="mean-spectra-days.png" alt="Mean-spectra-days">
-      <p>↑ Acoustic spectra of beehives. Each sensor is located in a different beehive. Average spectra are shown.</p>
-    </div>
-
-    <div class="block">
-      <img src="distance-measures-sensor-20.png" alt="Distances-20">
-      <p>↑ Distance measures for signal from sensor 20.</p>
-    </div>
-    <div class="block">
-      <img src="distance-measures-sensor-21.png" alt="Distances-21">
-      <p>↑ Distance measures for signal from sensor 21.</p>
-    </div>
-    <div class="block">
-      <img src="distance-measures-sensor-46.png" alt="Distances-46">
-      <p>↑ Distance measures for signal from sensor 46.</p>
-    </div>
-    <div class="block">
-      <img src="distance-measures-sensor-109.png" alt="Distances-109">
-      <p>↑ Distance measures for signal from sensor 109.</p>
-    </div>
-
+    <span class="description">Acoustic spectra of beehives. Each sensor is located in a different beehive.</span>
+    <select id="imageSelectorMean">
+	<option value="mean-spectra-days.png">Mean over days</option>
+	<option value="mean-spectra-hours.png">Mean over hours</option>
+    </select>
   </div>
+    <img id="displayedImageMean" src="mean-spectra-days.png" alt="Mean image">
+
+  <div class="container">
+    <span class="description">Distance measures for signal from selected sensor. </span>
+    <select id="imageSelectorDistance">
+	<option value="distance-measures-sensor-20.png">Sensor 20</option>
+	<option value="distance-measures-sensor-21.png">Sensor 21</option>
+	<option value="distance-measures-sensor-46.png">Sensor 46</option>
+	<option value="distance-measures-sensor-109.png">Sensor 109</option>
+    </select>
+  </div>
+  <img id="displayedImageDistance" src="distance-measures-sensor-20.png" alt="Sensor image">
+
+  <script>
+    const imageSelectorMean = document.getElementById('imageSelectorMean');
+    const displayedImageMean = document.getElementById('displayedImageMean');
+    imageSelectorMean.addEventListener('change', function () {
+      displayedImageMean.src = this.value;
+    });
+
+    const imageSelectorDistance = document.getElementById('imageSelectorDistance');
+    const displayedImageDistance = document.getElementById('displayedImageDistance');
+    imageSelectorDistance.addEventListener('change', function () {
+      displayedImageDistance.src = this.value;
+    });
+  </script>
+
 </body>
 </html>
